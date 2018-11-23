@@ -1,0 +1,50 @@
+clc;
+clear all;
+ 
+T = 2*pi;
+w0 = 2*pi/T;
+n = (0:1:50);
+t = linspace (-10,10);
+ 
+%change they(t) for the other function. 
+%y(t) = (0.*((t>-pi)-(t>0))+1.*((t>0)-(t>pi)));
+    f0=@(t) (0.*((t>-pi)-(t>0))+1.*((t>0)-(t>pi)));
+    fc=@(t,n) (0.*((t>-pi)-(t>0))+1.*((t>0)-(t>pi)))*cos(n.*w0*t);
+    fs=@(t,n) (0.*((t>-pi)-(t>0))+1.*((t>0)-(t>pi)))*sin(n.*w0*t);
+ 
+    a0=1/T*integral(@(t)f0(t),-T/2,T/2,'ArrayValued',true);
+    an=2/T*integral(@(t)fc(t,n),-T/2,T/2,'ArrayValued',true);
+    bn=2/T*integral(@(t)fs(t,n),-T/2,T/2,'ArrayValued',true);
+    
+    an(1) = a0;
+    
+    x1 = a0;
+for k1 = 1:1:50
+    ak1=2/T*integral(@(t)fc(t,k1),-T/2,T/2,'ArrayValued',true);
+    bk1=2/T*integral(@(t)fs(t,k1),-T/2,T/2,'ArrayValued',true);
+    xn = ak1*cos(k1*w0*t) + bk1*sin(k1*w0*t);
+    x1 = x1 + xn;
+end
+ 
+    x2 = a0;
+for k2 = 1:1:400
+    ak2=2/T*integral(@(t)fc(t,k2),-T/2,T/2,'ArrayValued',true);
+    bk2=2/T*integral(@(t)fs(t,k2),-T/2,T/2,'ArrayValued',true);
+    xn = ak2*cos(k2*w0*t) + bk2*sin(k2*w0*t);
+    x2 = x2 + xn;
+end
+
+    
+subplot(1,2,1), plot(t, x1)
+    xlabel('t')
+    ylabel('x(t)')
+    title('n=50')
+    grid on
+    axis([-10 10 -0.2 1.2])
+    
+subplot(1,2,2), plot(t, x2)
+    xlabel('t')
+    ylabel('x(t)')
+    title('n=400')
+    grid on
+    axis([-10 10 0 1])
